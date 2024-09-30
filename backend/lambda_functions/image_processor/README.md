@@ -10,8 +10,3 @@ This Lambda function processes uploaded images by resizing them and creating thu
 
 - Pillow
 - boto3
-
-## Deployment
-
-- Ensure the Pillow Layer is attached to the Lambda function.
-- Deploy using AWS SAM as outlined in the top-level README.
