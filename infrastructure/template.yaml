@@ -1,0 +1,50 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Serverless Image Processing Application
+
+Resources:
+  ImageProcessorFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: ImageProcessor
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.12
+      CodeUri: ../backend/lambda_functions/image_processor/
+      Layers:
+        -  #arn  # Replace with your actual Layer ARN
+      Environment:
+        Variables:
+          S3_BUCKET_NAME: my-image-processor-bucket
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AmazonS3FullAccess
+        - AmazonDynamoDBFullAccess
+      Events:
+        UploadAPI:
+          Type: Api
+          Properties:
+            Path: /upload
+            Method: post
+
+  ImageMetadataTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ImageMetadata
+      AttributeDefinitions:
+        - AttributeName: ImageID
+          AttributeType: S
+      KeySchema:
+        - AttributeName: ImageID
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+
+Outputs:
+  ImageProcessorFunction:
+    Description: 'Image Processor Lambda Function ARN'
+    Value: !GetAtt ImageProcessorFunction.Arn
+  UploadAPI:
+    Description: 'API Gateway endpoint URL for uploading images'
+    Value: !Sub ''
+  ImageMetadataTable:
+    Description: 'DynamoDB Table for Image Metadata'
+    Value: !Ref ImageMetadataTable
